@@ -1,0 +1,20 @@
+{
+  "name": "dart-score-beth",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "bun run --watch src/index.tsx & tailwindcss -i ./src/input.css -o ./public/output.css --watch"
+  },
+  "dependencies": {
+    "@elysiajs/html": "^0.8.0",
+    "@elysiajs/static": "^0.8.1",
+    "elysia": "latest",
+    "prettier": "^3.2.4"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "tailwind": "^4.0.0",
+    "tailwindcss": "^3.4.1"
+  },
+  "module": "src/index.tsx"
+}
