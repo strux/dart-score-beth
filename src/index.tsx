@@ -3,13 +3,19 @@ import { html } from "@elysiajs/html";
 import { staticPlugin } from "@elysiajs/static";
 import clsx from "clsx";
 
-const game = {
-  targets: ["20", "19"],
+const cricketTargets = {
+  "20": 0,
+  "19": 0,
+  "18": 0,
+  "17": 0,
+  "16": 0,
+  "15": 0,
+  B: 0,
 };
 
 let players = [
-  { name: "Brian", score: { "20": 0, "19": 0 } },
-  { name: "Danielle", score: { "20": 0, "19": 0 } },
+  { name: "Brian", score: Object.assign({}, cricketTargets) },
+  { name: "Danielle", score: Object.assign({}, cricketTargets) },
 ];
 
 function Page({ children }: any) {
@@ -43,7 +49,7 @@ function Board({ players }) {
       const player = players[i / 2];
       content[i] = <Score player={player} />;
     } else {
-      content[i] = <Labels targets={game.targets} />;
+      content[i] = <Labels targets={cricketTargets} />;
     }
   }
   return (
@@ -58,6 +64,31 @@ function Board({ players }) {
   );
 }
 
+function CricketMarker({ score }) {
+  if (score === 0) {
+    return <div>&nbsp;</div>;
+  }
+  const marks = [];
+  if (score > 0) {
+    marks.push(
+      <div class="absolute translate-y-[5px] left-[45%] translate-x-[-50%]">
+        /
+      </div>
+    );
+  }
+  if (score > 1) {
+    marks.push(
+      <div class="absolute translate-y-[5px] left-[55%] translate-x-[-50%]">
+        \
+      </div>
+    );
+  }
+  if (score > 2) {
+    marks.push(<div class="absolute left-[52%] translate-x-[-50%]">0</div>);
+  }
+  return <div class="relative h-full">{marks}</div>;
+}
+
 function Score({ player }) {
   return (
     <div class="player-score">
@@ -66,12 +97,12 @@ function Score({ player }) {
       </div>
       {Object.keys(player.score).map((target) => (
         <button
-          class="block w-full text-8xl leading-[4rem]"
+          class="block w-full h-[4rem] text-8xl leading-[4rem]"
           hx-put={`./player-score/${player.name}?target=${target}`}
           hx-swap="outerHTML"
           hx-target="closest .player-score"
         >
-          {player.score[target]}
+          <CricketMarker score={player.score[target]} />
         </button>
       ))}
     </div>
@@ -82,7 +113,7 @@ function Labels({ targets }) {
   return (
     <div class="">
       <div class="border-b-2">vs</div>
-      {targets.map((target) => (
+      {Object.keys(targets).map((target) => (
         <div class="block leading-[4rem] border-x-2 px-4">{target}</div>
       ))}
     </div>
