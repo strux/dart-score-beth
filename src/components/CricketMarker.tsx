@@ -1,4 +1,8 @@
-export default function CricketMarker({ score }) {
+interface CricketMarkerProps {
+  score: number;
+}
+
+export default function CricketMarker({ score }: CricketMarkerProps) {
   if (score === 0) {
     return (
       <div class="absolute translate-y-[5px] left-[45%] translate-x-[-50%]">

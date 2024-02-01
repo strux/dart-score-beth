@@ -1,4 +1,7 @@
-export default function Page({ children }: any) {
+interface PageProps {
+  children: JSX.Element[];
+}
+export default function Page({ children }: PageProps) {
   return (
     <html>
       <head>
@@ -9,7 +12,11 @@ export default function Page({ children }: any) {
           content="width=144, initial-scale=0.5, user-scalable=no"
         />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin="true"
+        />
         <link
           href="https://fonts.googleapis.com/css2?family=Kolker+Brush&family=Rozha+One&display=swap"
           rel="stylesheet"

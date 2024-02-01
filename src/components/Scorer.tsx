@@ -1,6 +1,10 @@
 import CricketMarker from "./CricketMarker";
 
-export default function Scorer({ player }) {
+interface ScorerProps {
+  player: IPlayer;
+}
+
+export default function Scorer({ player }: ScorerProps) {
   return (
     <div class="player-score">
       <div class="border-b-2 w-40 h-16 flex items-center justify-center font-brush text-center">

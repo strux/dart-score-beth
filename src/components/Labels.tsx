@@ -1,4 +1,8 @@
-export default function Labels({ targets }) {
+interface LabelsProps {
+  targets: TTargets;
+}
+
+export default function Labels({ targets }: LabelsProps) {
   return (
     <div class="">
       <div class="border-b-2 flex items-center justify-center font-rozha text-4xl text-center h-16">

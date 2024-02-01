@@ -1,4 +1,8 @@
-export default function Winner({ name }) {
+interface WinnerProps {
+  name: string;
+}
+
+export default function Winner({ name }: WinnerProps): JSX.Element {
   return (
     <h1
       hx-get="./winner"

@@ -2,7 +2,12 @@ import Scorer from "./Scorer";
 import Labels from "./Labels";
 import Winner from "./Winner";
 
-export default function Board({ players, targets }) {
+interface BoardProps {
+  players: IPlayer[];
+  targets: TTargets;
+}
+
+export default function Board({ players, targets }: BoardProps) {
   const colCount = players.length * 2 - 1;
   const content = [];
   for (let i = 0; i < colCount; i++) {
@@ -17,7 +22,7 @@ export default function Board({ players, targets }) {
     <div id="main-content-wrapper" class="scale-[1vw] border p-[6px]">
       <div class="border-[4px] p-[6px]">
         <div class="border p-6">
-          <Winner />
+          <Winner name="" />
           <div class="flex">{content}</div>
         </div>
       </div>

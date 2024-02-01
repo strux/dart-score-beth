@@ -1,4 +1,4 @@
-import { Elysia } from "elysia";
+import { Elysia, NotFoundError } from "elysia";
 import { html } from "@elysiajs/html";
 import { staticPlugin } from "@elysiajs/static";
 import Page from "./components/Page";
@@ -7,7 +7,7 @@ import Scorer from "./components/Scorer";
 import Winner from "./components/Winner";
 import Settings from "./components/Settings";
 
-const cricketTargets = new Map([
+const cricketTargets: TTargets = new Map([
   ["20", 0],
   ["19", 0],
   ["18", 0],
@@ -17,23 +17,26 @@ const cricketTargets = new Map([
   ["B", 0],
 ]);
 
-let players = [
+let players: IPlayer[] = [
   { name: "Player 1", score: new Map(cricketTargets) },
   { name: "Player 2", score: new Map(cricketTargets) },
 ];
 
-function getPlayerByName(name) {
-  return players.find((p) => p.name === name);
-}
-
-function updatePlayerScore(playerName, target) {
-  const player = getPlayerByName(playerName);
-  const score = player?.score.get(target);
-  if (score < 3) player.score.set(target, score + 1);
+function getPlayerByName(name: string): IPlayer {
+  const player = players.find((p) => p.name === name);
+  if (!player) throw new NotFoundError();
   return player;
 }
 
-function getWinner() {
+function updatePlayerScore(playerName: string, target: string): IPlayer | null {
+  const player = getPlayerByName(playerName);
+  const score = player?.score.get(target);
+  if (typeof score === "number" && player && score < 3)
+    player.score.set(target, score + 1);
+  return player;
+}
+
+function getWinner(): string | null {
   let winner = null;
   players.find((player) => {
     const scores = Array.from(player.score.values());
@@ -58,16 +61,17 @@ const app = new Elysia()
     "/player-score/:playerName",
     ({ set, params: { playerName }, query: { target } }) => {
       set.headers["HX-Trigger"] = "score-updated";
-      return (
-        <Scorer
-          player={updatePlayerScore(decodeURIComponent(playerName), target)}
-        />
-      );
+      if (!target) throw new NotFoundError();
+      const player = updatePlayerScore(decodeURIComponent(playerName), target)!;
+      return <Scorer player={player} />;
     }
   )
   .get("/winner", () => {
-    const winner = getWinner();
+    const winner = getWinner() || "";
     return <Winner name={winner} />;
+  })
+  .onError(({ code, error }) => {
+    return new Response(error.toString());
   })
   .listen(3000);
 
