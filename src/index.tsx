@@ -75,8 +75,7 @@ const app = new Elysia()
   .onError(({ code, error }) => {
     return new Response(error.toString());
   })
-  .listen(80);
-
+  .listen(process.env.PORT ?? 3000);
 process.on("SIGINT", () => {
   console.log("Ctrl-C was pressed");
   process.exit();
