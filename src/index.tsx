@@ -1,6 +1,7 @@
 import { Elysia, NotFoundError } from "elysia";
 import { html } from "@elysiajs/html";
 import { staticPlugin } from "@elysiajs/static";
+import { nanoid } from "nanoid";
 import Page from "./components/Page";
 import Board from "./components/Board";
 import Scorer from "./components/Scorer";
@@ -18,10 +19,29 @@ const cricketTargets: TTargets = new Map([
   ["B", 0],
 ]);
 
-let players: IPlayer[] = [
-  { id: "1", name: "Player 1", score: new Map(cricketTargets) },
-  { id: "2", name: "Player 2", score: new Map(cricketTargets) },
-];
+function newGame(players): void {
+  players = players.map((player: IPlayer) => {
+    player.score = new Map(cricketTargets);
+    return player;
+  });
+}
+
+function createPlayer(): IPlayer {
+  return {
+    id: nanoid(),
+    name: `Player ${players.length + 1}`,
+    score: new Map(cricketTargets),
+  };
+}
+
+function addPlayer(): IPlayer[] {
+  players.push(createPlayer());
+  return players;
+}
+
+function removePlayer(id: string): void {
+  players = players.filter((player) => player.id !== id);
+}
 
 function getPlayerById(id: string): IPlayer {
   const player = players.find((p) => p.id === decodeURIComponent(id));
@@ -37,10 +57,8 @@ function getPlayerByName(name: string): IPlayer {
 
 function updatePlayerName(id: string, newName: string): IPlayer {
   const player = getPlayerById(id);
-  if (player) {
-    player.name = newName;
-    return player;
-  }
+  player.name = newName;
+  return player;
 }
 
 function updatePlayerScore(id: string, target: string): IPlayer | null {
@@ -61,6 +79,11 @@ function getWinner(): string | null {
   return winner;
 }
 
+// Initial state
+let players: IPlayer[] = [];
+addPlayer();
+addPlayer();
+
 const app = new Elysia()
   .use(html())
   .use(staticPlugin())
@@ -68,9 +91,11 @@ const app = new Elysia()
     return (
       <Page>
         <Board players={players} targets={cricketTargets} />
-        <Settings />
       </Page>
     );
+  })
+  .get("/board", () => {
+    return <Board players={players} targets={cricketTargets} />;
   })
   .put("/player-score/:id", ({ set, params: { id }, query: { target } }) => {
     set.headers["HX-Trigger"] = "score-updated";
@@ -81,14 +106,35 @@ const app = new Elysia()
   .get("/player/:id/edit", ({ params: { id } }) => {
     return <PlayerName edit={true} player={getPlayerById(id)} />;
   })
-  .put("/player/:id", ({ set, params: { id }, body: { newPlayerName } }) => {
+  .put("/player/:id", ({ params: { id }, body: { newPlayerName } }) => {
     return (
       <PlayerName edit={false} player={updatePlayerName(id, newPlayerName)} />
     );
   })
+  .post("/player", ({ set }) => {
+    set.headers["HX-Trigger"] = "players-updated";
+    addPlayer();
+    return <Settings open={true} players={players} />;
+  })
+  .delete("/player/:id", ({ set, params: { id } }) => {
+    set.headers["HX-Trigger"] = "players-updated";
+    removePlayer(id);
+    return <Settings open={true} players={players} />;
+  })
   .get("/winner", () => {
     const winner = getWinner() || "";
     return <Winner name={winner} />;
+  })
+  .get("/settings", () => {
+    return <Settings open={false} players={players} />;
+  })
+  .get("/settings/edit", () => {
+    return <Settings open={true} players={players} />;
+  })
+  .post("/game", ({ set }) => {
+    set.headers["HX-Trigger"] = "players-updated";
+    newGame(players);
+    return <Settings open={false} players={players} />;
   })
   .onError(({ code, error }) => {
     return new Response(error.toString());

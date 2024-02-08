@@ -9,7 +9,7 @@ export default function Labels({ targets }: LabelsProps) {
         vs
       </div>
       {Array.from(targets.keys()).map((target) => (
-        <div class="block font-rozha text-4xl leading-[4rem] border-x-2 px-4">
+        <div class="block font-rozha text-4xl leading-[4rem] border-r-2 px-4">
           {target}
         </div>
       ))}

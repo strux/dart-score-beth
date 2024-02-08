@@ -25,7 +25,7 @@ export default function Page({ children }: PageProps) {
         <script src="./public/htmx.min.js"></script>
         <script src="./public/resize.js"></script>
       </head>
-      <body class="bg-slate-800 text-slate-300 font-rozha flex flex-col justify-center items-center text-center text-6xl w-fit overflow-hidden">
+      <body class="bg-slate-800 text-slate-300 font-rozha flex flex-col justify-center items-center text-center text-6xl w-full">
         {children}
       </body>
     </html>

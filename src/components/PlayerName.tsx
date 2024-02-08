@@ -1,6 +1,6 @@
 interface PlayerNameProps {
   player: IPlayer;
-  edit: boolean;
+  edit?: boolean;
 }
 
 export default function PlayerName({ player, edit = false }: PlayerNameProps) {

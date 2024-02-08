@@ -1,6 +1,7 @@
 import Scorer from "./Scorer";
 import Labels from "./Labels";
 import Winner from "./Winner";
+import Settings from "./Settings";
 
 interface BoardProps {
   players: IPlayer[];
@@ -8,22 +9,28 @@ interface BoardProps {
 }
 
 export default function Board({ players, targets }: BoardProps) {
-  const colCount = players.length * 2 - 1;
+  const middle = Math.ceil(players.length / 2);
   const content = [];
-  for (let i = 0; i < colCount; i++) {
-    if (i % 2 === 0) {
-      const player = players[i / 2];
-      content[i] = <Scorer player={player} />;
-    } else {
-      content[i] = <Labels targets={targets} />;
+  for (let i = 0; i < players.length; i++) {
+    if (i === middle) {
+      content.push(<Labels targets={targets} />);
     }
+    content.push(<Scorer player={players[i]} />);
   }
+
   return (
-    <div id="main-content-wrapper" class="scale-[1vw] border p-[6px]">
+    <div
+      id="main-content-wrapper"
+      class="scale-[1vw] border p-[6px]"
+      hx-trigger="players-updated from:body once"
+      hx-swap="outerHTML"
+      hx-get="./board"
+    >
       <div class="border-[4px] p-[6px]">
-        <div class="border p-6">
+        <div class="border p-4">
           <Winner name="" />
           <div class="flex">{content}</div>
+          <Settings open={true} players={players} />
         </div>
       </div>
     </div>
