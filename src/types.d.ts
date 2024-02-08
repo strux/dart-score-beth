@@ -1,4 +1,4 @@
-type TTargets = Map<string, number>;
+type TTargets = Array<Array<string, number>>;
 
 interface IPlayer {
   id: string;

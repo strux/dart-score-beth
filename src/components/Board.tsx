@@ -30,7 +30,17 @@ export default function Board({ players, targets }: BoardProps) {
         <div class="border p-4">
           <Winner name="" />
           <div class="flex">{content}</div>
-          <Settings open={true} players={players} />
+          <div class="flex justify-between items-end mt-4">
+            <button
+              hx-get="./undo"
+              hx-target="#main-content-wrapper"
+              hx-swap="outerHTML"
+              class="text-4xl mb-[-1rem]"
+            >
+              &larrhk;
+            </button>
+            <Settings open={false} players={players} />
+          </div>
         </div>
       </div>
     </div>
