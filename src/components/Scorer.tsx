@@ -15,6 +15,7 @@ export default function Scorer({ player }: ScorerProps) {
           hx-put={`./player-score/${player.id}?target=${target}`}
           hx-swap="outerHTML"
           hx-target="closest .player-score"
+          hx-trigger="mousedown"
         >
           <CricketMarker score={score} />
         </button>
