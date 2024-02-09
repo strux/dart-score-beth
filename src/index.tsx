@@ -27,7 +27,8 @@ const app = new Elysia()
     return <Board players={state.getPlayers()} targets={state.getTargets()} />;
   })
   .put("/player-score/:id", ({ set, params: { id }, query: { target } }) => {
-    set.headers["HX-Trigger"] = "score-updated";
+    // disabling to test perf
+    // set.headers["HX-Trigger"] = "score-updated";
     if (!target) throw new NotFoundError();
     const player = state.updatePlayerScore(id, target)!;
     return <Scorer player={player} />;
