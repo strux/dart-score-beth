@@ -14,8 +14,22 @@ state.addPlayer();
 state.addPlayer();
 
 const app = new Elysia()
-  .use(html())
+  .mapResponse(({ response, set }) => {
+    if (typeof response === "string") {
+      set.headers["Content-Encoding"] = "gzip";
+
+      const isJson = false;
+      return new Response(Bun.gzipSync(new TextEncoder().encode(response)), {
+        headers: {
+          "Content-Type": `${
+            isJson ? "application/json" : "text/html"
+          }; charset=utf-8`,
+        },
+      });
+    }
+  })
   .use(staticPlugin())
+  .use(html())
   .get("/", () => {
     return (
       <Page>
